@@ -1,26 +1,26 @@
-const { Schema, default: mongoose, Mongoose } = require("mongoose");
+import mongoose, { Schema } from "mongoose";
 
 const VendorSchema = new Schema({
     name: {
-        type: string,
+        type: String,
     },
     vendortype: {
-        type: string,
+        type: String,
     },
     criticality: {
-        type: string,
+        type: String,
     },
     status: {
-        type: string,
+        type: String,
     },
     contact: {
-        type: string,
+        type: String,
     },
     serviceProvided: {
-        type: string,
+        type: String,
     },
 })
 
-const Vendor = Mongoose.models.Vendor || mongoose.model("Vendor", VendorSchema);
+const Vendor = mongoose.models.Vendor || mongoose.model("Vendor", VendorSchema);
 
 export default Vendor;

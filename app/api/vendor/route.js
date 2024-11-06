@@ -1,3 +1,4 @@
+import Vendor from "@/app/Modal/vendor";
 import { connectionstr } from "@/lib/db";
 import { NextResponse } from "next/server";
 

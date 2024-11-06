@@ -1,26 +1,28 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Moon, Sun, Search, Info } from 'lucide-react'
 import { Switch } from "@/components/ui/switch"
-import { Moon, Sun, Search } from 'lucide-react'
 
-// Mock data for vendors
+// Mock data for demonstration
 const vendors = [
-    { id: 1, name: "Acme Corp", type: "Supplier", criticality: "High", status: "Active", contact: "john@acme.com" },
-    { id: 2, name: "TechPro Solutions", type: "Service Provider", criticality: "Medium", status: "Active", contact: "sarah@techpro.com" },
-    { id: 3, name: "Global Logistics", type: "Logistics", criticality: "Critical", status: "Under Review", contact: "mike@globallogistics.com" },
-    { id: 4, name: "Eco Friendly Materials", type: "Supplier", criticality: "Low", status: "Inactive", contact: "lisa@ecofriendly.com" },
-    { id: 5, name: "Innovative Software Inc", type: "Technology", criticality: "High", status: "Active", contact: "david@innovative.com" },
+    { id: 1, name: "Acme Corp", type: "Supplier", criticality: "High", status: "Active", contact: "john@acme.com", serviceProvided: "Raw Materials" },
+    { id: 2, name: "TechPro Solutions", type: "Service Provider", criticality: "Medium", status: "Active", contact: "sarah@techpro.com", serviceProvided: "IT Support" },
+    { id: 3, name: "Global Logistics", type: "Logistics", criticality: "Critical", status: "Active", contact: "mike@globallogistics.com", serviceProvided: "Shipping" },
+    { id: 4, name: "EcoPackage", type: "Supplier", criticality: "Low", status: "Inactive", contact: "lisa@ecopackage.com", serviceProvided: "Packaging Materials" },
+    { id: 5, name: "SecureNet", type: "Service Provider", criticality: "High", status: "Pending", contact: "alex@securenet.com", serviceProvided: "Cybersecurity" },
 ]
 
-export default function VendorListView() {
+export default function Home() {
     const [isDarkTheme, setIsDarkTheme] = useState(false)
-    const [searchTerm, setSearchTerm] = useState("")
+    const [searchTerm, setSearchTerm] = useState('')
 
     const toggleTheme = () => {
         setIsDarkTheme(!isDarkTheme)
@@ -29,7 +31,7 @@ export default function VendorListView() {
     const filteredVendors = vendors.filter(vendor =>
         vendor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         vendor.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        vendor.contact.toLowerCase().includes(searchTerm.toLowerCase())
+        vendor.serviceProvided.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
     const getCriticalityColor = (criticality) => {
@@ -43,7 +45,7 @@ export default function VendorListView() {
             case 'critical':
                 return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
             default:
-                return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
         }
     }
 
@@ -52,11 +54,11 @@ export default function VendorListView() {
             case 'active':
                 return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
             case 'inactive':
-                return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-            case 'under review':
-                return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'
-            default:
+                return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+            case 'pending':
                 return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+            default:
+                return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
         }
     }
 
@@ -64,7 +66,7 @@ export default function VendorListView() {
         <div className={`min-h-screen p-8 ${isDarkTheme ? 'dark' : ''}`}>
             <div className="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-300">
                 <Card className="w-full mx-auto bg-white dark:bg-gray-800 shadow-lg">
-                    <CardHeader className="flex flex-row items-center justify-between border-b dark:border-gray-700">
+                    <CardHeader className="border border-black flex flex-row items-center justify-between border-b dark:border-gray-700">
                         <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">Vendor List</CardTitle>
                         <div className="flex items-center space-x-2">
                             <Sun className="h-4 w-4 text-gray-500 dark:text-gray-400" />
@@ -73,52 +75,82 @@ export default function VendorListView() {
                         </div>
                     </CardHeader>
                     <CardContent className="p-6">
-                        <div className="flex justify-between items-center mb-6">
-                            <div className="relative w-64">
+                        <div className="mb-6">
+                            <Label htmlFor="search" className="text-gray-700 dark:text-gray-300">Search Vendors</Label>
+                            <div className="flex mt-1">
                                 <Input
+                                    id="search"
                                     type="text"
-                                    placeholder="Search vendors..."
+                                    placeholder="Search by name, type, or service"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="pl-10 pr-4 py-2 border rounded-md w-full dark:bg-gray-700 dark:text-gray-100"
+                                    className="flex-grow bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                                 />
-                                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                                <Button className="ml-2 bg-blue-700 hover:bg-blue-800 text-white">
+                                    <Search className="h-4 w-4" />
+                                </Button>
                             </div>
-                            <Button className="bg-blue-700 hover:bg-blue-800 text-white">Add New Vendor</Button>
                         </div>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="text-left dark:text-gray-300">Name</TableHead>
-                                    <TableHead className="text-left dark:text-gray-300">Type</TableHead>
-                                    <TableHead className="text-left dark:text-gray-300">Criticality</TableHead>
-                                    <TableHead className="text-left dark:text-gray-300">Status</TableHead>
-                                    <TableHead className="text-left dark:text-gray-300">Contact</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {filteredVendors.map((vendor) => (
-                                    <TableRow key={vendor.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                        <TableCell className="font-medium dark:text-gray-300">{vendor.name}</TableCell>
-                                        <TableCell className="dark:text-gray-300">{vendor.type}</TableCell>
-                                        <TableCell>
-                                            <Badge className={`font-semibold ${getCriticalityColor(vendor.criticality)}`}>
-                                                {vendor.criticality}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge className={`font-semibold ${getStatusColor(vendor.status)}`}>
-                                                {vendor.status}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="dark:text-gray-300">{vendor.contact}</TableCell>
+                        <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="text-gray-700 dark:text-gray-300">Name</TableHead>
+                                        <TableHead className="text-gray-700 dark:text-gray-300">Type</TableHead>
+                                        <TableHead className="text-gray-700 dark:text-gray-300">Criticality</TableHead>
+                                        <TableHead className="text-gray-700 dark:text-gray-300">Status</TableHead>
+                                        <TableHead className="text-gray-700 dark:text-gray-300">Contact</TableHead>
+                                        <TableHead className="text-gray-700 dark:text-gray-300">Service Provided</TableHead>
+                                        <TableHead className="text-gray-700 dark:text-gray-300">Actions</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody>
+                                    {filteredVendors.map((vendor) => (
+                                        <TableRow key={vendor.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                            <TableCell className="font-medium text-gray-900 dark:text-gray-100">{vendor.name}</TableCell>
+                                            <TableCell className="text-gray-700 dark:text-gray-300">{vendor.type}</TableCell>
+                                            <TableCell>
+                                                <Badge className={`${getCriticalityColor(vendor.criticality)}`}>
+                                                    {vendor.criticality}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge className={`${getStatusColor(vendor.status)}`}>
+                                                    {vendor.status}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-gray-700 dark:text-gray-300">{vendor.contact}</TableCell>
+                                            <TableCell className="text-gray-700 dark:text-gray-300">{vendor.serviceProvided}</TableCell>
+                                            <TableCell>
+                                                <TooltipProvider>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                className="bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900 dark:text-blue-100 dark:hover:bg-blue-800"
+                                                                onClick={() => console.log(`Open details for ${vendor.name}`)}
+                                                            >
+                                                                <Info className="h-4 w-4 mr-1" />
+                                                                Details
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            <p>Open vendor details</p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
         </div>
     )
 }
+
+

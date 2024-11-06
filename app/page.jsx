@@ -12,6 +12,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { Moon, Sun, Search, Home, Users, FileText, Settings, LogOut, Info } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 // Mock data for demonstration
 const vendors = [
@@ -44,6 +45,7 @@ const statusData = [
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
 
 export default function EnhancedVendorDashboard() {
+  
   const [isDarkTheme, setIsDarkTheme] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -85,6 +87,12 @@ export default function EnhancedVendorDashboard() {
     }
   }
 
+  const router = useRouter()
+
+  const handlechange = () => {
+    router.push("/vendorform")
+  }
+
   return (
     <div className={`min-h-screen ${isDarkTheme ? 'dark' : ''}`}>
       <div className="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors duration-300">
@@ -96,7 +104,7 @@ export default function EnhancedVendorDashboard() {
                 <Home className="mr-2 h-4 w-4" />
                 Dashboard
               </Button>
-              <Button variant="ghost" className="w-full justify-start">
+              <Button variant="ghost" className="w-full justify-start" onClick={handlechange}>
                 <Users className="mr-2 h-4 w-4" />
                 Vendors
               </Button>
